@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const routes = require("./routes");
 
 const app = express();
 const PORT = process.env.PORT || 3000; // Best practice: allow dynamic environment ports
@@ -38,6 +39,9 @@ app.use(cors(corsOptions)); // Capitalization changed to lowercase variable for 
 app.get("/", (req, res) => {
   res.send("This is the home page");
 });
+
+// mount the routes
+app.use('/api' , routes)
 
 /**
  * Centralized Error Handling Middleware
