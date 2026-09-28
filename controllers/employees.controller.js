@@ -122,5 +122,31 @@ module.exports = {
   },
   deleteEmployee: (req, res) => {
     // DELETE logic
+    try {
+      const id = parseInt(req.params.id);
+
+      const index = data.findIndex((emp) => emp.id === id);
+
+      if (index === -1) {
+        return res.status(404).send({
+          message: `Employee not found with id ${id}`,
+          code: "404",
+        });
+      }
+
+      const [deleteEmp] = data.splice(index, 1);
+      return res.status(200).send({
+        data: deleteEmp,
+        code: "200",
+        message: "Employee has been deleted!",
+      });
+
+    } catch (error) {
+      return res.status(500).send({
+        message: error.message,
+        code: "500",
+        reason: "Internal Server Error",
+      });
+    }
   },
 };
