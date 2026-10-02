@@ -140,7 +140,51 @@ module.exports = {
         code: "200",
         message: "Employee has been deleted!",
       });
+    } catch (error) {
+      return res.status(500).send({
+        message: error.message,
+        code: "500",
+        reason: "Internal Server Error",
+      });
+    }
+  },
 
+  patchEmployee: (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const updates = req.body; // jo bhi fields bheji gayi hain
+
+      const index = data.findIndex((emp) => emp.id === id);
+
+      /**
+       * PATCH: In Patch if resource not found it will consider a failure
+       */
+      if (index === -1) {
+        return res.status(404).send({
+          message: `Employee not found with id ${id}`,
+          code: "404",
+        });
+      }
+
+      // koi field bheji hi nahi gayi
+      if (!updates || Object.keys(updates).length === 0) {
+        return res.status(400).send({
+          message: "No fields provided to update",
+          code: "400",
+        });
+      }
+
+      /**
+       * PATCH: According to REST API rules if fields are missing leave that fields unchanged
+       * spread se sirf jo fields aayi hain wo overwrite hongi, baqi waisi rahengi
+       */
+      data[index] = { ...data[index], ...updates };
+
+      return res.status(200).send({
+        data: data[index],
+        message: "Employee field has been updated!",
+        code: "200",
+      });
     } catch (error) {
       return res.status(500).send({
         message: error.message,
