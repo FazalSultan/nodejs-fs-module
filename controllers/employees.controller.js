@@ -177,7 +177,7 @@ module.exports = {
 
       /**
        * PATCH: According to REST API rules if fields are missing leave that fields unchanged
-       * spread se sirf jo fields aayi hain wo overwrite hongi, baqi waisi rahengi
+       * 
        */
       data[index] = { ...data[index], ...updates };
 
