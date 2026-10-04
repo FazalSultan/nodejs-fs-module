@@ -1,3 +1,4 @@
+const { json } = require("express");
 const data = require("../constant/constant");
 module.exports = {
   getEmployees: (req, res) => {
@@ -139,6 +140,53 @@ module.exports = {
         data: deleteEmp,
         code: "200",
         message: "Employee has been deleted!",
+      });
+    } catch (error) {
+      return res.status(500).send({
+        message: error.message,
+        code: "500",
+        reason: "Internal Server Error",
+      });
+    }
+  },
+
+  /**
+   * PATCH: to update some fields inside a specific resource
+   */
+
+  PatchEmployee: (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+
+      /**
+       * In the below varaibe: 'update'  I will store or check that which resource I want to update is partially ...
+       */
+      const update = req.body;
+
+      // to check that whethere the employee exist or not
+      const index = data.findIndex((emp) => emp.id === id);
+      if (index == -1) {
+        return res.status(404).send({
+          message: `Employee not found with this ${id}`,
+          code: "404",
+        });
+      }
+
+      // if no fields are sent to the server
+      if (!update || Object.keys(update).length == 0) {
+        return res.status(400).send({
+          message: "No fields found to update",
+          code: "400",
+        });
+      }
+
+      //if fields are sent and found
+      data[index] = {...data[index], ...update};
+
+      return res.status(200).send({
+        data: data[index],
+        message: "Employee has been Updated!",
+        code: "404",
       });
 
     } catch (error) {
