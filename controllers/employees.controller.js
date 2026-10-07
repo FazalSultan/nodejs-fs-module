@@ -1,4 +1,3 @@
-const { json } = require("express");
 const data = require("../constant/constant");
 module.exports = {
   getEmployees: (req, res) => {
