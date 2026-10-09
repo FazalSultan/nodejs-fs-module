@@ -2,5 +2,5 @@ const router = require('express' ) .Router();
 const registerEmployeeController  =    require('../controllers/registerEmployee.controller')
 
 
-router.post('/register' , registerEmployeeController.handleEmployeeRegisteration)
+router.post('/auth' , registerEmployeeController.handleEmployeeRegisteration)
 module.exports = router;
