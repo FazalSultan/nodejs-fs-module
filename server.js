@@ -35,10 +35,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors(corsOptions)); // Capitalization changed to lowercase variable for standard convention
 
-// Routes
-app.get("/", (req, res) => {
-  res.send("This is the home page");
-});
+
 
 // mount the routes
 app.use('/api' , routes)
