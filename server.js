@@ -24,7 +24,6 @@ const corsOptions = {
       return callback(new Error("Blocked by CORS policy."));
     }
   },
-  optionsSuccessStatus: 200, // Good practice for legacy browser compatibility (IE11/smart TVs)
 };
 
 /**
