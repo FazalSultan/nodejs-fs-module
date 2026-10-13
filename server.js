@@ -3,12 +3,12 @@ const cors = require("cors");
 const routes = require("./routes");
 
 const app = express();
-const PORT = process.env.PORT || 3000; // Best practice: allow dynamic environment ports
+const PORT =  3000;
 
 /**
  * Allowed Origin Configuration
  */
-const allowedOrigins = ["http://localhost:5173", "https://www.google.com"];
+const allowedOrigins = ["http://localhost:5173"];
 
 const corsOptions = {
   origin: (origin, callback) => {
