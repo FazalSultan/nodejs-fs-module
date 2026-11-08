@@ -1,4 +1,4 @@
-const data = require("../constant/learning");
+// const data = require("../constant/learning");
 const path = require("path");
 const fs = require("fs").promises;
 const bcrypt = require("bcrypt");
