@@ -1,4 +1,9 @@
 const bcrypt = require("bcrypt");
+require("dotenv").config();
+const jwt = require("jsonwebtoken");
+
+const fs = require("fs").promises;
+const path = require("path");
 
 const objUsers = {
   users: require("../constant/users.json"),
@@ -6,6 +11,8 @@ const objUsers = {
     this.users = data;
   },
 };
+
+const filePath = path.join(__dirname, "..", "constant", "users.json");
 module.exports = {
   handleLoginUser: async (req, res) => {
     try {
@@ -17,11 +24,11 @@ module.exports = {
         });
       }
 
-      if(userEmail && !userEmail.includes('@')){
+      if (userEmail && !userEmail.includes("@")) {
         return res.status(400).send({
-            code: '400',
-            message: 'Email is not in a valid Format, it should includes @'
-        })
+          code: "400",
+          message: "Email is not in a valid Format, it should includes @",
+        });
       }
 
       const foundUser = objUsers.users.find(
@@ -40,10 +47,39 @@ module.exports = {
           foundUser.password,
         );
         if (matchUser) {
+          //create JWT
+          const accessToken = jwt.sign(
+            { email: foundUser.email }, // avoiding password for secuirity purposes
+            process.env.ACCESS_SECRET_TOKEN,
+            { expiresIn: "15m", algorithm: "HS256" },
+          );
+
+          const refreshToken = jwt.sign(
+            { email: foundUser.email }, // avoiding password for secuirity purposes
+            process.env.REFRESH_SECRET_TOKEN,
+            { expiresIn: "1d", algorithm: "HS256" },
+          );
+
+          /**
+           * Now save the refreshToken in the file with the logged user.
+           */
+          const otherUser = objUsers.users.filter(
+            (person) => person.email != foundUser.email,
+          );
+          const currentUser = { ...foundUser, refreshToken };
+          
+          //update it in memory
+          objUsers.setUsers([...otherUser, currentUser]);
+
+          //now write to the file
+          await fs.writeFile(filePath, JSON.stringify(objUsers.users));
+
           return res.status(200).send({
             code: "200",
             message: "You've Logged In.",
+            accessToken,
           });
+          
         } else {
           return res.status(401).send({
             code: "401",
