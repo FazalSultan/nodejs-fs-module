@@ -72,7 +72,14 @@ module.exports = {
           objUsers.setUsers([...otherUser, currentUser]);
 
           //now write to the file
-          await fs.writeFile(filePath, JSON.stringify(objUsers.users));
+          await fs.writeFile(filePath, JSON.stringify(objUsers.users , null ,2));
+
+          res.cookie("refreshToken", refreshToken, {
+            httpOnly: true,
+            maxAge: 24 * 60 * 60 * 1000, // 1 day
+            sameSite: "None",
+            secure: true,
+          });
 
           return res.status(200).send({
             code: "200",
