@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const routes = require("./routes");
+const cookieParser =  require('cookie-parser')
 
 const app = express();
 const PORT =  3000;
@@ -24,6 +25,7 @@ const corsOptions = {
       return callback(new Error("Blocked by CORS policy."));
     }
   },
+  credential: true
 };
 
 /**
@@ -33,6 +35,7 @@ const corsOptions = {
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors(corsOptions)); // Capitalization changed to lowercase variable for standard convention
+app.use(cookieParser())
 
 
 

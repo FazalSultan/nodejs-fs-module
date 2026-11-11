@@ -1,6 +1,7 @@
 [
   {
-    "email": "fazal.sultan@gmail.com",
-    "password": "$2b$10$flH33klMZVQhZGY.fPSHjumMhn/B08Hb/Lusyn1rFl42ZqIHlc0b6"
+    "email": "fazal.khan@gmail.com",
+    "password": "$2b$10$5HUd2f66UkeVcC6su7mX.e3DCysZsq63TMAOHXZ6iCuQjPOXnN0E2",
+    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZhemFsLmtoYW5AZ21haWwuY29tIiwiaWF0IjoxNzk0NDE5ODE1LCJleHAiOjE3OTQ1MDYyMTV9.uGetE9ldlgys1cgXEXyaD8PZebYxilKVt9EzZ6ToRy0"
   }
 ]
