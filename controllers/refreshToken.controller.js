@@ -53,7 +53,7 @@ module.exports = {
         { expiresIn: "15m", algorithm: "HS256" },
       );
 
-      // new refresh token (same secret jo verify me use hua)
+      
       const newRefreshToken = jwt.sign(
         { email: foundUser.email },
         process.env.REFRESH_SECRET_TOKEN,
