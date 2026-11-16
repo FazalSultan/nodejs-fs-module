@@ -1,7 +1,11 @@
 [
   {
     "email": "fazal.khan@gmail.com",
-    "password": "$2b$10$5HUd2f66UkeVcC6su7mX.e3DCysZsq63TMAOHXZ6iCuQjPOXnN0E2",
-    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZhemFsLmtoYW5AZ21haWwuY29tIiwiaWF0IjoxNzk0NTk1MzI1LCJleHAiOjE3OTQ2ODE3MjUsImp0aSI6IjAyMjNlNzM1LWJjYTYtNDJhMS04YTNjLTEwY2QxYzNkNjc3YyJ9.akD7hAQwHAcyWtkFxynyzOhEjxMbJ1r-B-SYEosomY8"
+    "roles": {
+      "Admin": "admin",
+      "Editor": "editor",
+      "User": "user"
+    },
+    "password": "$2b$10$auiO6DhOY4kKm6YmFus1b.HkCrF7dVu4cp46Pf9soT.mGvRsMB.gG"
   }
 ]

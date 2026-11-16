@@ -15,13 +15,19 @@ const filePath = path.join(__dirname, "..", "constant", "users.json");
 module.exports = {
   registerEmployee: async (req, res) => {
     try {
-      const { userEmail, userPassword } = req.body;
-      if (!userEmail || !userPassword) {
+      const { userEmail, userPassword , roles } = req.body;
+      if (!userEmail || !userPassword || !roles) {
         return res.status(400).send({
           code: "400",
-          message: "User's Email and are Required!",
+          message: "User's Email , Password and Roles are Required!",
         });
       }
+      const frontendRoles = {
+        "Admin": roles.Admin,
+        "Editor": roles.Editor,
+        "User": roles.User,
+      };
+
 
       //Check for Duplicate
       const duplicate = objUsers.users.find(
@@ -34,10 +40,18 @@ module.exports = {
         });
       }
 
+      /**
+       * "roles" : {
+       *  "Admin" : 'admin',
+       *  "Editor" : 'editor,
+       *  "User" : 'user'
+       * }
+       */
       //if no duplicates , then create a hashpassword
       const hashedPassword = await bcrypt.hash(userPassword, 10);
       const newUser = {
         email: userEmail,
+        roles: frontendRoles,
         password: hashedPassword,
       };
 
