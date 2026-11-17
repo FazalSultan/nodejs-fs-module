@@ -1,6 +1,7 @@
 const bcrypt = require("bcrypt");
 const fs = require("fs").promises;
 const path = require("path");
+const rolesList = require('../constant/rolesList')
 
 const objUsers = {
   users: require("../constant/users.json"),
@@ -16,10 +17,10 @@ module.exports = {
   registerEmployee: async (req, res) => {
     try {
       const { userEmail, userPassword } = req.body;
-      if (!userEmail || !userPassword) {
+      if (!userEmail || !userPassword ) {
         return res.status(400).send({
           code: "400",
-          message: "User's Email and are Required!",
+          message: "User's Email , Password and Roles are Required!",
         });
       }
 
@@ -38,6 +39,7 @@ module.exports = {
       const hashedPassword = await bcrypt.hash(userPassword, 10);
       const newUser = {
         email: userEmail,
+        roles: [rolesList.User],
         password: hashedPassword,
       };
 

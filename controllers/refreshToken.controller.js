@@ -46,14 +46,13 @@ module.exports = {
       if (decoded.email !== foundUser.email) {
         return res.status(403).json({ code: "403", message: "Forbidden" });
       }
-
+      const roles = Object.values(foundUser.roles);
       const accessToken = jwt.sign(
-        { email: foundUser.email },
+        { userInfo: { email: foundUser.email, roles: roles } },
         process.env.ACCESS_SECRET_TOKEN,
         { expiresIn: "15m", algorithm: "HS256" },
       );
 
-      
       const newRefreshToken = jwt.sign(
         { email: foundUser.email },
         process.env.REFRESH_SECRET_TOKEN,

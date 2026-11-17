@@ -26,7 +26,8 @@ const verifyJWT = (req, res, next) => {
         });
       }
 
-      req.user = decoded.email;
+      req.user = decoded.userInfo.email;
+      req.roles = decoded.userInfo.roles;
       next();
     },
   );
