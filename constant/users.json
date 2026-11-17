@@ -1,11 +1,27 @@
 [
   {
+    "email": "fazal.editor@gmail.com",
+    "roles": [
+      2001
+    ],
+    "password": "$2b$10$G1YjlykCojR5yv6k1dTQl.R2tGLwRBizH5JVOrTnDvpq1PIgZMGh2"
+  },
+  {
     "email": "fazal.khan@gmail.com",
-    "roles": {
-      "Admin": "admin",
-      "Editor": "editor",
-      "User": "user"
-    },
-    "password": "$2b$10$auiO6DhOY4kKm6YmFus1b.HkCrF7dVu4cp46Pf9soT.mGvRsMB.gG"
+    "roles": [
+      2001,
+      1984,
+      5150
+    ],
+    "password": "$2b$10$i5/5tiyUDH0.cQ9e/J44QeibpFLGzYgtrLwTvFZ/yMuRfe07ITJwi",
+    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZhemFsLmtoYW5AZ21haWwuY29tIiwiaWF0IjoxNzk0OTMzMDUyLCJleHAiOjE3OTUwMTk0NTJ9.9IIz5VN_YuBHZHZOod8tNpg39G_BqLHcVLRkov0m8LU"
+  },
+  {
+    "email": "fazal.user@gmail.com",
+    "roles": [
+      2001
+    ],
+    "password": "$2b$10$gr899fB3/VUFqhtGMog9iuIHFP1O4hNo9XPwV75W26FMoM.s/N1LW",
+    "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImZhemFsLnVzZXJAZ21haWwuY29tIiwiaWF0IjoxNzk0OTM1MDQ4LCJleHAiOjE3OTUwMjE0NDh9.O11MNv7WIJaFaj9w7KRMXrpvA6fZmyGWPVjAxdkZhHo"
   }
 ]

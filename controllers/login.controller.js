@@ -48,8 +48,9 @@ module.exports = {
         );
         if (matchUser) {
           //create JWT
+          const roles = Object.values(foundUser.roles);
           const accessToken = jwt.sign(
-            { email: foundUser.email }, // avoiding password for secuirity purposes
+            { userInfo: { email: foundUser.email, roles: roles } }, // avoiding password for secuirity purposes
             process.env.ACCESS_SECRET_TOKEN,
             { expiresIn: "15m", algorithm: "HS256" },
           );
@@ -67,12 +68,12 @@ module.exports = {
             (person) => person.email != foundUser.email,
           );
           const currentUser = { ...foundUser, refreshToken };
-          
+
           //update it in memory
           objUsers.setUsers([...otherUser, currentUser]);
 
           //now write to the file
-          await fs.writeFile(filePath, JSON.stringify(objUsers.users , null ,2));
+          await fs.writeFile(filePath, JSON.stringify(objUsers.users, null, 2));
 
           res.cookie("refreshToken", refreshToken, {
             httpOnly: true,
@@ -86,7 +87,6 @@ module.exports = {
             message: "You've Logged In.",
             accessToken,
           });
-          
         } else {
           return res.status(401).send({
             code: "401",

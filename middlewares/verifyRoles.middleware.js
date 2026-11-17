@@ -1,7 +1,25 @@
-/**
- * define roles in backend
- * provide the avaliable role to the routes
- * send the roles from the Frontend and save it back in the user.json file
- * compare that is the frontend roles are present in the backend define roles? if yes then
- * check whether what roles are access or what have not.
- */
+const verifyRole = (...allowedRoles) => {
+  return (req, res, next) => {
+    // verifyJWT ne roles set nahi kiye to aage mat jao
+    if (!req.roles) {
+      return res.status(401).send({
+        code: "401",
+        message: "Roles not found, or you have no permission to perform this action",
+      });
+    }
+
+    // user ke roles mein se koi ek bhi allowed ho to pass
+    const hasAccess = req.roles.some((role) => allowedRoles.includes(role));
+
+    if (!hasAccess) {
+      return res.status(403).send({
+        code: "403",
+        message: "You don't have permission for this",
+      });
+    }
+
+    next();
+  };
+};
+
+module.exports = verifyRole;
