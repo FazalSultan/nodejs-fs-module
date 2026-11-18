@@ -1,0 +1,13 @@
+Cluster
+Cluster matlab servers ka group jahan tumhara MongoDB data rehta hai. Ye usually MongoDB Atlas (cloud) mein banta hai. Ek cluster mein ek ya zyada servers (nodes) hote hain, taake ek server band ho jaye to data safe rahe.
+
+Atlas mein free tier (M0) par bhi tumhe ek replica set cluster milta hai.
+
+Database
+Cluster ke andar ek ya zyada databases hote hain. Har app ka alag database rakh sakte ho, jaise attendix_db, blog_db.
+
+Collection
+Database ke andar collections hoti hain. SQL ke “table” ke barabar samjho. Jaise users, products, orders.
+
+Document
+Collection ke andar documents hote hain. SQL ki “row” ke barabar. Document ek JSON jaisa object hota hai (asal mein BSON mein store hota hai):
