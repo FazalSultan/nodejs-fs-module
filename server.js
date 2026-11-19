@@ -1,10 +1,15 @@
+require('dotenv').config();
 const express = require("express");
 const cors = require("cors");
 const routes = require("./routes");
-const cookieParser =  require('cookie-parser')
+const cookieParser =  require('cookie-parser');
+const mongoose =  require('mongoose');
+const connectDB = require('./config/DbConn');
 
 const app = express();
 const PORT =  3000;
+
+connectDB();
 
 /**
  * Allowed Origin Configuration
@@ -25,7 +30,7 @@ const corsOptions = {
       return callback(new Error("Blocked by CORS policy."));
     }
   },
-  credential: true
+  credentials: true
 };
 
 /**
@@ -53,6 +58,11 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: "Internal Server Error" });
 });
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}...`);
+
+mongoose.connection.once("open", () => {
+  console.log("Connected to Database");
+  app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}...`);
+  });
 });
+
