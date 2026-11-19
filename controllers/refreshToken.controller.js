@@ -2,7 +2,6 @@ const jwt = require("jsonwebtoken");
 const path = require("path");
 const crypto = require("crypto");
 const fs = require("fs").promises;
-require("dotenv").config();
 
 const objUsers = {
   users: require("../constant/users.json"),
