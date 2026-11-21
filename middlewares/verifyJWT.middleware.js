@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const verifyJWT = (req, res, next) => {
   const header = req.headers["authorization"];
 
+  // check that token format is correct or not
   if (!header || !header.startsWith("Bearer ")) {
     return res.status(401).send({
       code: "401",
