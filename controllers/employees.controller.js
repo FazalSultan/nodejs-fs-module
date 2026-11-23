@@ -1,4 +1,6 @@
 const data = require("../constant/constant");
+const Employee = require("../model/employee.model");
+
 module.exports = {
   getEmployees: (req, res) => {
     // Validation
@@ -37,50 +39,57 @@ module.exports = {
       });
     }
   },
-  createEmployee: (req, res) => {
+  createEmployee: async (req, res) => {
     try {
       const { first_name, last_name, email, gender } = req.body;
 
-      // validation
+      //  Basic presence validation
       if (!first_name || !last_name || !email || !gender) {
-        return res.status(400).send({
-          message: "first_name, last_name, email and gender are required",
+        return res.status(400).json({
+          message: "first_name, last_name, email, and gender are required",
         });
       }
 
-      // duplicate email check
-      const emailExists = data.some(
-        (emp) => emp.email.toLowerCase() === email.toLowerCase(),
-      );
-      if (emailExists) {
-        return res.status(409).send({
-          message: "An employee with this email already exists",
+      const normalizedEmail = email.toLowerCase().trim();
+      const duplicateEmail = await Employee.findOne({ email: normalizedEmail });
+
+      if (duplicateEmail) {
+        return res.status(409).json({
+          message: "An employee already exists with this email",
         });
       }
 
-      // better id generation - last item ki id + 1
-      const newId = data.length > 0 ? data[data.length - 1].id + 1 : 1;
+      // Create employee in the DB
+      const newEmployee = await Employee.create({
+        firstName: first_name,
+        lastName: last_name,
+        email: normalizedEmail,
+        gender: gender,
+      });
 
-      const newEmployee = {
-        id: newId,
-        first_name: first_name.trim(),
-        last_name: last_name.trim(),
-        email: email.trim().toLowerCase(),
-        gender,
-      };
-
-      // ab data ko actually update kar rahe hain (immutable way)
-      data.push(newEmployee);
-
-      return res.status(201).send({
+      return res.status(201).json({
         data: newEmployee,
         message: "New employee has been created",
       });
     } catch (error) {
+      // Handle Mongoose schema validation errors (e.g., invalid email format or gender enum)
+      if (error.name === "ValidationError") {
+        const messages = Object.values(error.errors).map((val) => val.message);
+        return res.status(400).json({ message: messages.join(", ") });
+      }
+
+      // Handle MongoDB unique index race condition (error code 11000)
+      if (error.code === 11000) {
+        return res.status(409).json({
+          message: "An employee already exists with this email",
+        });
+      }
+
       console.error("createEmployee error:", error);
-      return res.status(500).send({ message: "Internal server error" });
+      return res.status(500).json({ message: "Internal server error" });
     }
   },
+
   updateEmployee: (req, res) => {
     try {
       const id = parseInt(req.params.id);
@@ -176,7 +185,7 @@ module.exports = {
 
       /**
        * PATCH: According to REST API rules if fields are missing leave that fields unchanged
-       * 
+       *
        */
       data[index] = { ...data[index], ...updates };
 
