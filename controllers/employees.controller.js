@@ -1,5 +1,5 @@
 const data = require("../constant/constant");
-const Employee = require("../model/employee.model");
+const Employee = require("../model/employee/employee.model");
 
 module.exports = {
   getEmployees: (req, res) => {
