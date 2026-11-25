@@ -2,43 +2,52 @@ const data = require("../constant/constant");
 const Employee = require("../model/employee/employee.model");
 
 module.exports = {
-  getEmployees: (req, res) => {
-    // Validation
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 7;
-    const totalPages = Math.ceil(data.length / limit);
+  getEmployees: async (req, res) => {
+  const DEFAULT_LIMIT = 5;
+  const DEFAULT_PAGE = 1;
+  const MAX_LIMIT = 100;
 
-    try {
-      const MAX_LIMIT = data.length;
-      if (limit > MAX_LIMIT || limit < 1) limit = 7;
-      if (typeof limit != "number") limit = 7;
-      if (page > totalPages) {
-        res.status(200).send({
-          data: [],
-          page,
-          limit,
-          pages: totalPages,
-          message: "No more data on this page",
-        });
-      }
+  try {
+    // query me value na ho to default, warna parse karo
+    let limit = req.query.limit === undefined ? DEFAULT_LIMIT : parseInt(req.query.limit, 10);
+    let page = req.query.page === undefined ? DEFAULT_PAGE : parseInt(req.query.page, 10);
 
-      const start = (page - 1) * limit;
-      const end = start + limit;
-      const sliceData = data.slice(start, end);
-      const responseObj = {
-        data: sliceData,
-        page: page,
-        limit: limit,
-        pages: totalPages,
-      };
-      res.status(200).send(responseObj);
-    } catch (error) {
-      res.status(500).send({
-        code: 501,
-        message: error.message,
+    if (Number.isNaN(limit) || Number.isNaN(page)) {
+      return res.status(400).send({
+        code: 400,
+        message: "Page or Limit has invalid type",
       });
     }
-  },
+
+    if (limit <= 0) limit = DEFAULT_LIMIT;
+    if (page <= 0) page = DEFAULT_PAGE;
+    limit = Math.min(limit, MAX_LIMIT);
+
+    const skip = (page - 1) * limit;
+
+    const [employees, total] = await Promise.all([
+      Employee.find().sort({ _id: -1 }).skip(skip).limit(limit).lean(),
+      Employee.countDocuments(),
+    ]);
+
+    return res.status(200).send({
+      code: 200,
+      res: employees,
+      pagination: {
+        limit,
+        page,
+        totalItems: total,
+        totalPages: Math.ceil(total / limit),
+      },
+    });
+  } catch (error) {
+    console.error("getEmployees error:", error);
+    return res.status(500).send({
+      code: 500,
+      message: "Internal server error",
+    });
+  }
+},
   createEmployee: async (req, res) => {
     try {
       const { first_name, last_name, email, gender } = req.body;
