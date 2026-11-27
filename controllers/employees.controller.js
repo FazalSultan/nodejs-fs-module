@@ -1,53 +1,60 @@
 const data = require("../constant/constant");
+const mongoose = require("mongoose");
 const Employee = require("../model/employee/employee.model");
 
 module.exports = {
   getEmployees: async (req, res) => {
-  const DEFAULT_LIMIT = 5;
-  const DEFAULT_PAGE = 1;
-  const MAX_LIMIT = 100;
+    const DEFAULT_LIMIT = 5;
+    const DEFAULT_PAGE = 1;
+    const MAX_LIMIT = 100;
 
-  try {
-    // query me value na ho to default, warna parse karo
-    let limit = req.query.limit === undefined ? DEFAULT_LIMIT : parseInt(req.query.limit, 10);
-    let page = req.query.page === undefined ? DEFAULT_PAGE : parseInt(req.query.page, 10);
+    try {
+      // query me value na ho to default, warna parse karo
+      let limit =
+        req.query.limit === undefined
+          ? DEFAULT_LIMIT
+          : parseInt(req.query.limit, 10);
+      let page =
+        req.query.page === undefined
+          ? DEFAULT_PAGE
+          : parseInt(req.query.page, 10);
 
-    if (Number.isNaN(limit) || Number.isNaN(page)) {
-      return res.status(400).send({
-        code: 400,
-        message: "Page or Limit has invalid type",
+      if (Number.isNaN(limit) || Number.isNaN(page)) {
+        return res.status(400).send({
+          code: 400,
+          message: "Page or Limit has invalid type",
+        });
+      }
+
+      if (limit <= 0) limit = DEFAULT_LIMIT;
+      if (page <= 0) page = DEFAULT_PAGE;
+      limit = Math.min(limit, MAX_LIMIT);
+
+      const skip = (page - 1) * limit;
+
+      const [employees, total] = await Promise.all([
+        Employee.find().sort({ _id: -1 }).skip(skip).limit(limit).lean(),
+        Employee.countDocuments(),
+      ]);
+
+      return res.status(200).send({
+        code: 200,
+        res: employees,
+        pagination: {
+          limit,
+          page,
+          totalItems: total,
+          totalPages: Math.ceil(total / limit),
+        },
+      });
+    } catch (error) {
+      console.error("getEmployees error:", error);
+      return res.status(500).send({
+        code: 500,
+        message: "Internal server error",
       });
     }
-
-    if (limit <= 0) limit = DEFAULT_LIMIT;
-    if (page <= 0) page = DEFAULT_PAGE;
-    limit = Math.min(limit, MAX_LIMIT);
-
-    const skip = (page - 1) * limit;
-
-    const [employees, total] = await Promise.all([
-      Employee.find().sort({ _id: -1 }).skip(skip).limit(limit).lean(),
-      Employee.countDocuments(),
-    ]);
-
-    return res.status(200).send({
-      code: 200,
-      res: employees,
-      pagination: {
-        limit,
-        page,
-        totalItems: total,
-        totalPages: Math.ceil(total / limit),
-      },
-    });
-  } catch (error) {
-    console.error("getEmployees error:", error);
-    return res.status(500).send({
-      code: 500,
-      message: "Internal server error",
-    });
-  }
-},
+  },
   createEmployee: async (req, res) => {
     try {
       const { first_name, last_name, email, gender } = req.body;
@@ -138,30 +145,35 @@ module.exports = {
       });
     }
   },
-  deleteEmployee: (req, res) => {
-    // DELETE logic
+
+  deleteEmployee: async (req, res) => {
     try {
-      const id = parseInt(req.params.id);
+      const { id } = req.params;
 
-      const index = data.findIndex((emp) => emp.id === id);
-
-      if (index === -1) {
-        return res.status(404).send({
-          message: `Employee not found with id ${id}`,
-          code: "404",
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({
+          code: 400,
+          message: "Invalid employee id",
         });
       }
 
-      const [deleteEmp] = data.splice(index, 1);
-      return res.status(200).send({
-        data: deleteEmp,
-        code: "200",
-        message: "Employee has been deleted!",
+      const deletedEmployee = await Employee.findByIdAndDelete(id);
+
+      if (!deletedEmployee) {
+        return res.status(404).json({
+          code: 404,
+          message: `Employee not found with id ${id}`,
+        });
+      }
+
+      return res.status(200).json({
+        code: 200,
+        message: "Employee deleted successfully",
       });
     } catch (error) {
-      return res.status(500).send({
+      return res.status(500).json({
+        code: 500,
         message: error.message,
-        code: "500",
         reason: "Internal Server Error",
       });
     }
