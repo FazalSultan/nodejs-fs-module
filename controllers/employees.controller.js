@@ -106,42 +106,59 @@ module.exports = {
     }
   },
 
-  updateEmployee: (req, res) => {
+  updateEmployee: async (req, res) => {
     try {
-      const id = parseInt(req.params.id);
+      const { id } = req.params;
       const { first_name, last_name, email, gender } = req.body;
 
-      // validation
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({
+          code: 400,
+          message: "Invalid employee id",
+        });
+      }
+
       if (!first_name || !last_name || !email || !gender) {
-        return res.status(400).send({
-          message: "first_name, last_name, email and gender are required",
+        return res.status(400).json({
+          code: 400,
+          message: "All fields are required",
         });
       }
 
-      const records = data.find((rec) => rec.id === id);
+      const updatedEmployee = await Employee.findByIdAndUpdate(
+        id,
+        {
+          firstName: first_name,
+          lastName: last_name,
+          email,
+          gender,
+        },
+        { returnDocument: 'after', runValidators: true },
+      );
 
-      // pehle check karo record mila ya nahi, tabhi update karo
-      if (!records) {
-        return res.status(404).send({
-          data: [],
-          message: "Employee does not exist",
+      if (!updatedEmployee) {
+        return res.status(404).json({
+          code: 404,
+          message: `Employee not found with id ${id}`,
         });
       }
 
-      // ab safe hai update karna
-      records.first_name = first_name.trim();
-      records.last_name = last_name.trim();
-      records.email = email.trim().toLowerCase();
-      records.gender = gender;
-
-      return res.status(200).send({
-        data: records,
-        message: "Employee information has been updated successfully!",
+      return res.status(200).json({
+        code: 200,
+        message: "Employee updated successfully",
+        data: updatedEmployee,
       });
     } catch (error) {
-      return res.status(500).send({
+      if (error.code === 11000) {
+        return res.status(409).json({
+          code: 409,
+          message: "Email already exists",
+        });
+      }
+      return res.status(500).json({
+        code: 500,
         message: error.message,
-        code: "500",
+        reason: "Internal Server Error",
       });
     }
   },
