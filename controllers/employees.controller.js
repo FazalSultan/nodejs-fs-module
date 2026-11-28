@@ -9,7 +9,6 @@ module.exports = {
     const MAX_LIMIT = 100;
 
     try {
-      // query me value na ho to default, warna parse karo
       let limit =
         req.query.limit === undefined
           ? DEFAULT_LIMIT
